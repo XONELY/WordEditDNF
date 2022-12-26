@@ -8,11 +8,13 @@ namespace WordEditDNF
 {
     internal class Menu
     {
+
         public static void Message(string text)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ResetColor();
         }
+
     }
 }
