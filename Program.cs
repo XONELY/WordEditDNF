@@ -20,37 +20,14 @@ namespace WordEditDNF
             {
                 try
                 {
-                    Console.WriteLine("Укажите путь к директории с данными");
-                    string DataDir = Console.ReadLine();
-                    Menu.Message("Чтение директории");
-                    string[] allDataFiles = Directory.GetFiles(DataDir);
-                    List<PersonData> persons = new List<PersonData>();
-                    foreach (string DataFile in allDataFiles)
-                    {
-                        persons.Add(new PersonData(DataFile.Remove(0, 39).Trim(new char[] { '.', 'c', 's', 'v' }))); //ew
-                    }
-
-                    for (int i = 0; i < persons.Count; i++)
-                    {
-                        List<string> Data = LoadDataFile.Start(allDataFiles[i]);
-                        Menu.Message($"Данные из ({allDataFiles[i]}) загружены.");
-                        Menu.Message("Присвоение загруженных данных по ключу...");
-                        string[] keys = persons[i].info.Keys.ToArray();
-                        int counter = 0;
-                        foreach (string key in keys)
-                        {
-                            persons[i].info[key] = Data[counter];
-                            counter++;
-                        }
-                        Menu.Message($"Данные ({persons[i].name}) присвоены.");
-                    }
+                    GetIDs.Start();
 
                     string[] replaceFields =
-                    {
+                            {
+                    "{ID}",
                     "{FULLNAME}",
                     "{BIRTHDATE}",
                     "{INN}",
-                    "{SNILS}",
                     "{PASSPORT}",
                     "{INITIALS}",
                     "{INS_NUMBER}",
@@ -59,28 +36,34 @@ namespace WordEditDNF
                     "{INS_AMOUNT}",
                     "{INS_NAME}",
                     "{PASS_ADR}",
+                    "{SNILS}",
                     };
-
                     Console.WriteLine("Укажите путь к директории с .docx файлами");
                     string wordfileDir = Console.ReadLine();
-                    Menu.Message("Чтение директории");
                     string[] wordFiles = Directory.GetFiles(wordfileDir);
                     Console.WriteLine("Укажите тип файлов");
                     string type = Console.ReadLine();
+
+                    List<PersonData> personDatas = new List<PersonData>();
+                    for (int i = 0; i < wordFiles.Length; i++)
+                    {
+                        personDatas.Add(new PersonData(i));
+                    }
+
                     for (int i = 0; i < wordFiles.Count(); i++)
                     {
-                        string[] replaceTo = persons[i].info.Values.ToArray();
+                        string[] replaceTo = personDatas[i].info.Values.ToArray();
                         Editor.Start(wordFiles[i], replaceFields, replaceTo, type);
-                        Console.WriteLine($"loaded {wordFiles[i]}");
+
                     }
-                    Menu.Message("Готово.");
+
                     repeat = false;
                     Console.ReadKey();
 
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    Menu.Message("Неверно указана директория");
+                    Console.WriteLine("Неверно указана директория");
 
                 }
             }

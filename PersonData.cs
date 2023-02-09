@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,17 +9,14 @@ using System.Xml.Linq;
 
 namespace WordEditDNF
 {
-     class PersonData
+    class PersonData
     {
-       static int counter = 0;
-       private string Name;
-       public string name { get { return Name; } set { Name = value; } }
         public Dictionary<string, string> info = new Dictionary<string, string>()
         {
+            ["ID"] = "None",
             ["FULLNAME"] = "None",
             ["BIRTHDATE"] = "None",
             ["INN"] = "None",
-            ["SNILS"] = "None",
             ["PASSPORT"] = "None",
             ["INITIALS"] = "None",
             ["INS_NUMBER"] = "None",
@@ -27,15 +25,29 @@ namespace WordEditDNF
             ["INS_AMOUNT"] = "None",
             ["INS_NAME"] = "None",
             ["PASS_ADR"] = "None",
+            ["SNILS"] = "None",
         };
 
-        public PersonData(string name)
+        public PersonData(int counter)
         {
-            this.name = name;
-            
-            Console.WriteLine($"Создан объект с именем: {name}, присвоен номер [{counter}].");
-            counter++;
-        }
-    } 
-}
+            string[] keys = info.Keys.ToArray();
+            string conStr = "server=localhost;user=root;database=Raters;password=1009";
+            MySqlConnection sqlCon = new MySqlConnection(conStr);
+            sqlCon.Open();
+            MySqlCommand mySqlCommand = new MySqlCommand($"select * from data where id = {counter + 1}", sqlCon); //+1 так как в ID в БД отсчет от 1
+            MySqlDataReader mySqlDataReader = mySqlCommand.ExecuteReader();
 
+            while (mySqlDataReader.Read())
+            {
+                for (int i = 0; i < mySqlDataReader.FieldCount; i++)
+                {
+                    info[keys[i]] = mySqlDataReader.GetString(i);
+
+                }
+            }
+
+            sqlCon.Close();
+        }
+    }
+
+}

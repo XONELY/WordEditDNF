@@ -8,10 +8,10 @@ using GemBox.Document;
 namespace WordEditDNF
 {        
     
-    internal class Editor
+    class Editor
     {
-        public static string todayDate = DateTime.Today.Date.ToString();
-       public static void Start(string dir, string[] ReplaceFields, string[] ReplaceTo, string type)
+
+        public static void Start(string dir, string[] ReplaceFields, string[] ReplaceTo, string type)
         {
             ComponentInfo.SetLicense("D02V-DHB9-YI9R-TMSV");
 
@@ -21,8 +21,8 @@ namespace WordEditDNF
                 document.Content.Replace($"{ReplaceFields[i]}", $"{ReplaceTo[i]}");
                 document.Content.Replace("{DATE}", DateTime.Today.ToString().Substring(0, 10));
             }
-            document.Save($"{dir.Trim(new char[] { '.', 'd', 'o', 'c','x' })}.{type}.docx");//ew2
+            document.Save($@"{dir.Substring(0, dir.Length - 4)}{type}.docx");
         }
-        
+
     }
 }
